@@ -31,6 +31,7 @@ logger = logging.getLogger()
 
 
 def enviar_mensaje(cs, data):
+
     """ Esta función envía datos (data) a través del socket cs
         Devuelve el número de bytes enviados.
     """
@@ -45,6 +46,7 @@ def recibir_mensaje(cs):
 
 
 def cerrar_conexion(cs):
+    cs.close()
     """ Esta función cierra una conexión activa.
     """
     pass
@@ -119,6 +121,22 @@ def main():
         logger.info('Enabling server in address {} and port {}.'.format(args.host, args.port))
 
         logger.info("Serving files from {}".format(args.webroot))
+
+        socket_server = socket.socket(family=socket.AF_INET, type=socket.SOCK_STREAM, proto=0) # Crear socket TCP
+        socket_server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # Permitir reusar la misma dirección
+        socket_server.bind((args.host, args.port)) # Vincular el socket a una IP y puerto elegidos
+        socket_server.listen() # Escuchar conexiones entrantes
+
+        while True:
+            conn, addr = socket_server.accept() # Aceptamos la conexión entrante
+            pid = os.fork() # Crear un proceso hijo
+            if pid == 0: # Proceso hijo
+                socket_server.close() # Cerrar el socket del padre
+                process_web_request(conn, args.webroot) # Procesar la petición
+                conn.close()
+                sys.exit(0)
+            else: # Proceso padre
+                conn.close() # Cerrar el socket que gestiona el hijo
 
         """ Funcionalidad a realizar
         * Crea un socket TCP (SOCK_STREAM)
