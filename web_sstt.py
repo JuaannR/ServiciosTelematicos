@@ -31,7 +31,8 @@ logger = logging.getLogger()
 
 
 def enviar_mensaje(cs, data):
-
+    data_sent = cs.send(data)
+    return data_sent.encode()
     """ Esta función envía datos (data) a través del socket cs
         Devuelve el número de bytes enviados.
     """
@@ -39,6 +40,8 @@ def enviar_mensaje(cs, data):
 
 
 def recibir_mensaje(cs):
+    data = cs.recv(BUFSIZE)
+    return data.decode()
     """ Esta función recibe datos a través del socket cs
         Leemos la información que nos llega. recv() devuelve un string con los datos.
     """
@@ -64,6 +67,22 @@ def process_cookies(headers,  cs):
 
 
 def process_web_request(cs, webroot):
+
+    while True:
+        rsublist, wsublist, xsublist = cs.select([cs], [], [], TIMEOUT_CONNECTION) # Esperamos a que haya datos en el socket o se alcance el timeout
+        if not rsublist or not wsublist or not xsublist:
+            print("Se alcanzo el TIMEOUT sin respuestas")
+            break
+        datos = recibir_mensaje(rsublist)
+        if not datos:
+            print("No recibe datos")
+            break
+        
+
+        
+        
+        
+        
     """ Procesamiento principal de los mensajes recibidos.
         Típicamente se seguirá un procedimiento similar al siguiente (aunque el alumno puede modificarlo si lo desea)
 
@@ -131,12 +150,12 @@ def main():
             conn, addr = socket_server.accept() # Aceptamos la conexión entrante
             pid = os.fork() # Crear un proceso hijo
             if pid == 0: # Proceso hijo
-                socket_server.close() # Cerrar el socket del padre
+                cerrar_conexion(socket_server) # Cerrar el socket del padre
                 process_web_request(conn, args.webroot) # Procesar la petición
-                conn.close()
+                cerrar_conexion(conn) # Cerrar la conexión con el cliente
                 sys.exit(0)
             else: # Proceso padre
-                conn.close() # Cerrar el socket que gestiona el hijo
+                cerrar_conexion(conn) # Cerrar el socket que gestiona el hijo
 
         """ Funcionalidad a realizar
         * Crea un socket TCP (SOCK_STREAM)
