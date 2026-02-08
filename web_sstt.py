@@ -32,7 +32,7 @@ logger = logging.getLogger()
 
 def enviar_mensaje(cs, data):
     data_sent = cs.send(data)
-    return data_sent.encode()
+    return data_sent
     """ Esta función envía datos (data) a través del socket cs
         Devuelve el número de bytes enviados.
     """
@@ -69,20 +69,24 @@ def process_cookies(headers,  cs):
 def process_web_request(cs, webroot):
 
     while True:
-        rsublist, wsublist, xsublist = cs.select([cs], [], [], TIMEOUT_CONNECTION) # Esperamos a que haya datos en el socket o se alcance el timeout
-        if not rsublist or not wsublist or not xsublist:
-            print("Se alcanzo el TIMEOUT sin respuestas")
-            break
-        datos = recibir_mensaje(rsublist)
-        if not datos:
-            print("No recibe datos")
+        # Solo nos interesa rlist para lectura
+        rlist, _, _ = select.select([cs], [], [], TIMEOUT_CONNECTION)
+        
+        if not rlist:
+            print("Se alcanzó el TIMEOUT sin respuestas")
             break
         
+        for sock in rlist:  # rlist es una lista de sockets
+            datos = recibir_mensaje(sock)
+            if not datos:
+                print("No se recibieron datos")
+                break
+            print("Datos recibidos:\n", datos)
+            # Aquí iría el procesamiento de HTTP
+            break  # procesamos solo la primera petición
+        break
 
-        
-        
-        
-        
+    
     """ Procesamiento principal de los mensajes recibidos.
         Típicamente se seguirá un procedimiento similar al siguiente (aunque el alumno puede modificarlo si lo desea)
 
