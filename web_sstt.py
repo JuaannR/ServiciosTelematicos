@@ -16,8 +16,11 @@ import logging      # Para imprimir logs
 
 
 BUFSIZE = 8192 # Tamaño máximo del buffer que se puede utilizar
-TIMEOUT_CONNECTION = 20 # Timout para la conexión persistente
+TIMEOUT_CONNECTION = 2 # Timout para la conexión persistente
 MAX_ACCESOS = 10
+
+Solicitud_HTTP = r"^(GET|POST) (/[^ ]*) (HTTP)(/)(1\.1)$"
+Error = r"Error [0-9]+ ."
 
 # Extensiones admitidas (extension, name in HTTP)
 filetypes = {"gif":"image/gif", "jpg":"image/jpg", "jpeg":"image/jpeg", "png":"image/png", "htm":"text/htm", 
@@ -32,7 +35,7 @@ logger = logging.getLogger()
 
 def enviar_mensaje(cs, data):
     data_sent = cs.send(data)
-    return data_sent
+    return data_sent.encode()
     """ Esta función envía datos (data) a través del socket cs
         Devuelve el número de bytes enviados.
     """
@@ -68,9 +71,12 @@ def process_cookies(headers,  cs):
 
 def process_web_request(cs, webroot):
 
-    while True:
+    rlist, _, _ = select.select([cs], [], [], TIMEOUT_CONNECTION)
+
+    while len(rlist) == 1:
+        print("Se establece conexión")
         # Solo nos interesa rlist para lectura
-        rlist, _, _ = select.select([cs], [], [], TIMEOUT_CONNECTION)
+        
         
         if not rlist:
             print("Se alcanzó el TIMEOUT sin respuestas")
@@ -84,7 +90,42 @@ def process_web_request(cs, webroot):
             print("Datos recibidos:\n", datos)
             # Aquí iría el procesamiento de HTTP
             break  # procesamos solo la primera petición
-        break
+        
+        cabezera, _, body = datos.partition("\r\n\r\n")  # Separar cabeceras del cuerpo
+        linea_cabezera = cabezera.split("\r\n")
+        linea_solicitad = linea_cabezera[0]
+        m = re.match(Solicitud_HTTP, linea_solicitad)
+        metodo = m.group(1)
+        ruta = m.group(2)
+        formato = m.group(3)
+        ralla = m.group(4)
+        version = m.group(5)
+
+        if not m:
+            if not metodo:
+                print("Error 405 Method Not Allowed")
+                break
+            if formato != "HTTP":
+                print("Error 400 Bad Request")
+                break
+            if formato == "HTTP" and version != "1.1":
+                print("Error 505 HTTP Version Not Supported")
+                break
+            if not ralla:
+                print("Error 400 Bad Request")
+                break
+
+        if m:
+            if ruta == "/":
+                ruta = "/index.html"
+            ruta_completa = webroot + ruta # Construir la ruta completa del recurso solicitado
+        ruta_valida = os.path.isfile(ruta_completa)
+        if not ruta_valida:
+            print("Error 404 Not found")
+
+        rlist, _, _ = select.select([cs], [], [], TIMEOUT_CONNECTION)
+
+    print("Se cierra conexión")
 
     
     """ Procesamiento principal de los mensajes recibidos.
@@ -157,6 +198,7 @@ def main():
                 cerrar_conexion(socket_server) # Cerrar el socket del padre
                 process_web_request(conn, args.webroot) # Procesar la petición
                 cerrar_conexion(conn) # Cerrar la conexión con el cliente
+
                 sys.exit(0)
             else: # Proceso padre
                 cerrar_conexion(conn) # Cerrar el socket que gestiona el hijo
@@ -178,7 +220,8 @@ def main():
             - Si es el proceso padre cerrar el socket que gestiona el hijo.
         """
     except KeyboardInterrupt:
-        True
+        cerrar_conexion(socket_server)
+        sys.exit(0)
 
 if __name__== "__main__":
     main()
