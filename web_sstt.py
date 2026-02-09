@@ -16,7 +16,7 @@ import logging      # Para imprimir logs
 
 
 BUFSIZE = 8192 # Tamaño máximo del buffer que se puede utilizar
-TIMEOUT_CONNECTION = 2 # Timout para la conexión persistente
+TIMEOUT_CONNECTION = 5 # Timout para la conexión persistente
 MAX_ACCESOS = 10
 
 Solicitud_HTTP = r"^(GET|POST) (/[^ ]*) (HTTP)(/)(1\.1)$"
@@ -31,6 +31,18 @@ logging.basicConfig(level=logging.INFO,
                     format='[%(asctime)s.%(msecs)03d] [%(levelname)-7s] %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 logger = logging.getLogger()
+
+# Crear un handler que escriba en un archivo
+file_handler = logging.FileHandler("servidor.log", mode='w')  # "a" para append, "w" para sobrescribir
+
+# Configurar el formato para este handler
+formatter = logging.Formatter('[%(asctime)s.%(msecs)03d] [%(levelname)-7s] %(message)s',
+                              datefmt='%Y-%m-%d %H:%M:%S')
+file_handler.setFormatter(formatter)
+
+# Añadir el handler al logger
+logger.addHandler(file_handler)
+
 
 
 def enviar_mensaje(cs, data):
@@ -74,22 +86,20 @@ def process_web_request(cs, webroot):
     rlist, _, _ = select.select([cs], [], [], TIMEOUT_CONNECTION)
 
     while len(rlist) == 1:
-        print("Se establece conexión")
+        logger.info("Se establece conexión")
         # Solo nos interesa rlist para lectura
         
         
         if not rlist:
-            print("Se alcanzó el TIMEOUT sin respuestas")
+            logger.info("Se alcanzó el TIMEOUT sin respuestas")
             break
         
-        for sock in rlist:  # rlist es una lista de sockets
-            datos = recibir_mensaje(sock)
-            if not datos:
-                print("No se recibieron datos")
-                break
-            print("Datos recibidos:\n", datos)
-            # Aquí iría el procesamiento de HTTP
-            break  # procesamos solo la primera petición
+        datos = recibir_mensaje(cs)
+        if not datos:
+            logger.info("No se recibieron datos")
+            break
+        logger.info("Datos recibidos:\n" + datos)
+        # Aquí iría el procesamiento de HTTP
         
         cabezera, _, body = datos.partition("\r\n\r\n")  # Separar cabeceras del cuerpo
         linea_cabezera = cabezera.split("\r\n")
@@ -103,16 +113,16 @@ def process_web_request(cs, webroot):
 
         if not m:
             if not metodo:
-                print("Error 405 Method Not Allowed")
+                logger.info("Error 405 Method Not Allowed")
                 break
             if formato != "HTTP":
-                print("Error 400 Bad Request")
+                logger.info("Error 400 Bad Request")
                 break
             if formato == "HTTP" and version != "1.1":
-                print("Error 505 HTTP Version Not Supported")
+                logger.info("Error 505 HTTP Version Not Supported")
                 break
             if not ralla:
-                print("Error 400 Bad Request")
+                logger.info("Error 400 Bad Request")
                 break
 
         if m:
@@ -121,11 +131,11 @@ def process_web_request(cs, webroot):
             ruta_completa = webroot + ruta # Construir la ruta completa del recurso solicitado
         ruta_valida = os.path.isfile(ruta_completa)
         if not ruta_valida:
-            print("Error 404 Not found")
+            logger.info("Error 404 Not found")
 
         rlist, _, _ = select.select([cs], [], [], TIMEOUT_CONNECTION)
 
-    print("Se cierra conexión")
+    logger.info("Se cierra conexión")
 
     
     """ Procesamiento principal de los mensajes recibidos.
@@ -198,7 +208,6 @@ def main():
                 cerrar_conexion(socket_server) # Cerrar el socket del padre
                 process_web_request(conn, args.webroot) # Procesar la petición
                 cerrar_conexion(conn) # Cerrar la conexión con el cliente
-
                 sys.exit(0)
             else: # Proceso padre
                 cerrar_conexion(conn) # Cerrar el socket que gestiona el hijo
