@@ -83,17 +83,15 @@ def process_cookies(headers,  cs):
 
 def process_web_request(cs, webroot):
 
+    # "lista" con el socket que esta escucahndo
     rlist, _, _ = select.select([cs], [], [], TIMEOUT_CONNECTION)
 
+    # mientras el cliente este conectado (no salta el timeout) el servidor procesa peticiones por ese socket
     while len(rlist) == 1:
         logger.info("Se establece conexión")
         # Solo nos interesa rlist para lectura
         
-        
-        if not rlist:
-            logger.info("Se alcanzó el TIMEOUT sin respuestas")
-            break
-        
+        # si el cliente envia mensaje sin datos (el navegador ha cerrado la conexión) se deja de procesar request
         datos = recibir_mensaje(cs)
         if not datos:
             logger.info("No se recibieron datos")
@@ -115,7 +113,7 @@ def process_web_request(cs, webroot):
             if not metodo:
                 logger.info("Error 405 Method Not Allowed")
                 break
-            if formato != "HTTP":
+            if formato != "HTTP":  #alomejor es get
                 logger.info("Error 400 Bad Request")
                 break
             if formato == "HTTP" and version != "1.1":
@@ -134,7 +132,11 @@ def process_web_request(cs, webroot):
             logger.info("Error 404 Not found")
 
         rlist, _, _ = select.select([cs], [], [], TIMEOUT_CONNECTION)
-
+    
+     
+    if not rlist:
+        logger.info("Se alcanzó el TIMEOUT sin respuestas")
+            
     logger.info("Se cierra conexión")
 
     
@@ -202,15 +204,15 @@ def main():
         socket_server.listen() # Escuchar conexiones entrantes
 
         while True:
-            conn, addr = socket_server.accept() # Aceptamos la conexión entrante
+            conn, _ = socket_server.accept() # Aceptamos la conexión entrante
             pid = os.fork() # Crear un proceso hijo
             if pid == 0: # Proceso hijo
                 cerrar_conexion(socket_server) # Cerrar el socket del padre
-                process_web_request(conn, args.webroot) # Procesar la petición
-                cerrar_conexion(conn) # Cerrar la conexión con el cliente
+                process_web_request(conn, args.webroot) # Procesar la petición del cliente en el socket especifico
+                cerrar_conexion(conn) # Cerrar la conexión con el cliente / se cierra el socket especifico del cliente
                 sys.exit(0)
             else: # Proceso padre
-                cerrar_conexion(conn) # Cerrar el socket que gestiona el hijo
+                cerrar_conexion(conn) # Cerrar el socket especifico del hijo y sigo escuchando por socket_server
 
         """ Funcionalidad a realizar
         * Crea un socket TCP (SOCK_STREAM)
