@@ -44,29 +44,23 @@ file_handler.setFormatter(formatter)
 logger.addHandler(file_handler)
 
 
-
+#Envia datos a través del socket cliente (cs)
+#Retorna el número de bytes enviados
 def enviar_mensaje(cs, data):
-    data_sent = cs.send(data)
-    return data_sent.encode()
-    """ Esta función envía datos (data) a través del socket cs
-        Devuelve el número de bytes enviados.
-    """
+    return cs.send(data)
     pass
 
+#Recibe datos a través del socket cliente (cs)
+# Se leen los datos y se convierten a string
 
 def recibir_mensaje(cs):
     data = cs.recv(BUFSIZE)
     return data.decode()
-    """ Esta función recibe datos a través del socket cs
-        Leemos la información que nos llega. recv() devuelve un string con los datos.
-    """
     pass
 
-
+# Cerrar conexión activa
 def cerrar_conexion(cs):
     cs.close()
-    """ Esta función cierra una conexión activa.
-    """
     pass
 
 
@@ -99,37 +93,94 @@ def process_web_request(cs, webroot):
         logger.info("Datos recibidos:\n" + datos)
         # Aquí iría el procesamiento de HTTP
         
-        cabezera, _, body = datos.partition("\r\n\r\n")  # Separar cabeceras del cuerpo
+        
+        
+        # Separar cabeceras del cuerpo
+        cabezera, _, body = datos.partition("\r\n\r\n")  
         linea_cabezera = cabezera.split("\r\n")
+
+        
+        #Si no hay línea de solicitud -> Petición mal formada
+        if len(linea_cabezera) == 0:
+            logger.info("Error 400 Bad Request")
+            break
+        
+        #Analizar línea de solicitud
+        #Se espera GET /ruta HTTP/1.1
         linea_solicitad = linea_cabezera[0]
+        
         m = re.match(Solicitud_HTTP, linea_solicitad)
-        metodo = m.group(1)
-        ruta = m.group(2)
-        formato = m.group(3)
-        ralla = m.group(4)
-        version = m.group(5)
-
+        
+        #Si no se cumple el patrón -> Petición mal formada
         if not m:
-            if not metodo:
-                logger.info("Error 405 Method Not Allowed")
-                break
-            if formato != "HTTP":  #alomejor es get
-                logger.info("Error 400 Bad Request")
-                break
-            if formato == "HTTP" and version != "1.1":
-                logger.info("Error 505 HTTP Version Not Supported")
-                break
-            if not ralla:
-                logger.info("Error 400 Bad Request")
-                break
+            logger.info("Error 400 Bad Request")
+            break
+        
+        #Extraer partes de la linea
+        metodo = m.group(1) #GET o POST
+        ruta = m.group(2) # /index.html
+        formato = m.group(3) #redundante
+        ralla = m.group(4) #redundante
+        version = m.group(5) # 1.1
+        
+        # Validar método -> Solo se permite GET
+        if metodo != "GET":
+            logger.info("Error 405 Method Not Allowed")
+            break
 
-        if m:
-            if ruta == "/":
-                ruta = "/index.html"
-            ruta_completa = webroot + ruta # Construir la ruta completa del recurso solicitado
-        ruta_valida = os.path.isfile(ruta_completa)
-        if not ruta_valida:
-            logger.info("Error 404 Not found")
+        #Validar versión HTTP -> Solo se permite HTTP/1.1
+        if version != "1.1":
+            logger.info("Error 505 HTTP Version Not Supported")
+            break
+        
+        if ruta == "/":
+            ruta = "/index.html"
+            
+        # Construir ruta absoluta del fichero
+        ruta_completa = os.path.join(webroot, ruta.lstrip("/"))
+
+        # Verficar que el fichero existe
+        if not os.path.isfile(ruta_completa):
+            logger.info("Error 404 Not Found")
+            break
+        
+        
+        
+        #Si el fichero existe, enviamos 200 OK
+        tam = os.path.getsize(ruta_completa)
+        
+        #Obtener extensión
+        ext = ruta_completa.split(".")[-1]
+        content_type = filetypes.get(ext, "application/octet-stream")
+        
+        # Fecha HTTP correcta
+        from email.utils import formatdate
+        fecha = formatdate(timeval=None, localtime=False, usegmt=True)
+
+        # Construir respuesta 200 OK
+        respuesta = (
+            "HTTP/1.1 200 OK\r\n"
+            f"Server: web.nombreorganizacionXXYY.org\r\n"
+            f"Date: {fecha}\r\n"
+            f"Content-Type: {content_type}\r\n"
+            f"Content-Length: {tam}\r\n"
+            f"Connection: keep-alive\r\n"
+            f"Keep-Alive: timeout={TIMEOUT_CONNECTION}\r\n"
+            "\r\n"
+        )  
+        
+        # Enviar cabeceras
+        cs.send(respuesta.encode())
+
+        # Enviar fichero en bloques
+        with open(ruta_completa, "rb") as f:
+            while True:
+                bloque = f.read(BUFSIZE)
+                if not bloque:
+                    break
+                cs.send(bloque)   
+        
+        
 
         rlist, _, _ = select.select([cs], [], [], TIMEOUT_CONNECTION)
     

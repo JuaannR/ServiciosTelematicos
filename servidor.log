@@ -1,204 +1,427 @@
-[2026-02-09 17:54:58.455] [INFO   ] Enabling server in address localhost and port 8000.
-[2026-02-09 17:54:58.455] [INFO   ] Serving files from .
-[2026-02-09 17:55:02.040] [INFO   ] Se establece conexi贸n
-[2026-02-09 17:55:02.043] [INFO   ] Datos recibidos:
-GET / HTTP/1.1
-Host: localhost:8000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
-Accept-Encoding: gzip, deflate, br, zstd
-Connection: keep-alive
-Upgrade-Insecure-Requests: 1
-Sec-Fetch-Dest: document
-Sec-Fetch-Mode: navigate
-Sec-Fetch-Site: cross-site
-Sec-Fetch-User: ?1
-Priority: u=0, i
-Pragma: no-cache
-Cache-Control: no-cache
+[2026-02-14 16:50:09.428] [INFO   ] Enabling server in address 127.0.0.1 and port 8000.
+[2026-02-14 16:50:09.428] [INFO   ] Serving files from .
+[2026-02-14 16:50:25.322] [INFO   ] Se establece conexi髇
+[2026-02-14 16:50:25.323] [INFO   ] Datos recibidos:
+GET / HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: none
+Sec-Fetch-User: ?1
+Priority: u=0, i
+
 
+[2026-02-14 16:50:25.380] [INFO   ] Se establece conexi髇
+[2026-02-14 16:50:25.381] [INFO   ] Datos recibidos:
+GET /logo-um.jpg HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=5, i
+
 
-[2026-02-09 17:55:07.051] [INFO   ] Se cierra conexi贸n
-[2026-02-09 17:55:07.057] [INFO   ] Se establece conexi贸n
-[2026-02-09 17:55:07.058] [INFO   ] Datos recibidos:
-GET / HTTP/1.1
-Host: localhost:8000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
-Accept-Encoding: gzip, deflate, br, zstd
-Connection: keep-alive
-Upgrade-Insecure-Requests: 1
-Sec-Fetch-Dest: document
-Sec-Fetch-Mode: navigate
-Sec-Fetch-Site: cross-site
-Sec-Fetch-User: ?1
-Priority: u=0, i
-Pragma: no-cache
-Cache-Control: no-cache
+[2026-02-14 16:50:25.400] [INFO   ] Se establece conexi髇
+[2026-02-14 16:50:25.401] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
+[2026-02-14 16:50:25.402] [INFO   ] Error 404 Not Found
+[2026-02-14 16:50:25.402] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:50:25.409] [INFO   ] Se establece conexi髇
+[2026-02-14 16:50:25.409] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
-[2026-02-09 17:55:12.062] [INFO   ] Se cierra conexi贸n
-[2026-02-09 17:55:12.072] [INFO   ] Se establece conexi贸n
-[2026-02-09 17:55:12.073] [INFO   ] Datos recibidos:
-GET / HTTP/1.1
-Host: localhost:8000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
-Accept-Encoding: gzip, deflate, br, zstd
-Connection: keep-alive
-Upgrade-Insecure-Requests: 1
-Sec-Fetch-Dest: document
-Sec-Fetch-Mode: navigate
-Sec-Fetch-Site: cross-site
-Sec-Fetch-User: ?1
-Priority: u=0, i
-Pragma: no-cache
-Cache-Control: no-cache
+[2026-02-14 16:50:25.410] [INFO   ] Error 404 Not Found
+[2026-02-14 16:50:25.411] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:50:25.417] [INFO   ] Se establece conexi髇
+[2026-02-14 16:50:25.417] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
+[2026-02-14 16:50:25.418] [INFO   ] Error 404 Not Found
+[2026-02-14 16:50:25.418] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:50:25.422] [INFO   ] Se establece conexi髇
+[2026-02-14 16:50:25.423] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
-[2026-02-09 17:55:17.078] [INFO   ] Se cierra conexi贸n
-[2026-02-09 17:55:17.087] [INFO   ] Se establece conexi贸n
-[2026-02-09 17:55:17.088] [INFO   ] Datos recibidos:
-GET / HTTP/1.1
-Host: localhost:8000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
-Accept-Encoding: gzip, deflate, br, zstd
-Connection: keep-alive
-Upgrade-Insecure-Requests: 1
-Sec-Fetch-Dest: document
-Sec-Fetch-Mode: navigate
-Sec-Fetch-Site: cross-site
-Sec-Fetch-User: ?1
-Priority: u=0, i
-Pragma: no-cache
-Cache-Control: no-cache
+[2026-02-14 16:50:25.423] [INFO   ] Error 404 Not Found
+[2026-02-14 16:50:25.423] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:50:25.427] [INFO   ] Se establece conexi髇
+[2026-02-14 16:50:25.427] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
+[2026-02-14 16:50:25.427] [INFO   ] Error 404 Not Found
+[2026-02-14 16:50:25.427] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:50:25.431] [INFO   ] Se establece conexi髇
+[2026-02-14 16:50:25.432] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
-[2026-02-09 17:55:22.095] [INFO   ] Se cierra conexi贸n
-[2026-02-09 17:55:22.105] [INFO   ] Se establece conexi贸n
-[2026-02-09 17:55:22.105] [INFO   ] Datos recibidos:
-GET / HTTP/1.1
-Host: localhost:8000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
-Accept-Encoding: gzip, deflate, br, zstd
-Connection: keep-alive
-Upgrade-Insecure-Requests: 1
-Sec-Fetch-Dest: document
-Sec-Fetch-Mode: navigate
-Sec-Fetch-Site: cross-site
-Sec-Fetch-User: ?1
-Priority: u=0, i
-Pragma: no-cache
-Cache-Control: no-cache
+[2026-02-14 16:50:25.432] [INFO   ] Error 404 Not Found
+[2026-02-14 16:50:25.432] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:50:25.436] [INFO   ] Se establece conexi髇
+[2026-02-14 16:50:25.437] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
+[2026-02-14 16:50:25.437] [INFO   ] Error 404 Not Found
+[2026-02-14 16:50:25.437] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:50:25.440] [INFO   ] Se establece conexi髇
+[2026-02-14 16:50:25.441] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
-[2026-02-09 17:55:27.113] [INFO   ] Se cierra conexi贸n
-[2026-02-09 17:55:27.123] [INFO   ] Se establece conexi贸n
-[2026-02-09 17:55:27.124] [INFO   ] Datos recibidos:
-GET / HTTP/1.1
-Host: localhost:8000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
-Accept-Encoding: gzip, deflate, br, zstd
-Connection: keep-alive
-Upgrade-Insecure-Requests: 1
-Sec-Fetch-Dest: document
-Sec-Fetch-Mode: navigate
-Sec-Fetch-Site: cross-site
-Sec-Fetch-User: ?1
-Priority: u=0, i
-Pragma: no-cache
-Cache-Control: no-cache
+[2026-02-14 16:50:25.441] [INFO   ] Error 404 Not Found
+[2026-02-14 16:50:25.442] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:50:25.445] [INFO   ] Se establece conexi髇
+[2026-02-14 16:50:25.445] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
+[2026-02-14 16:50:25.446] [INFO   ] Error 404 Not Found
+[2026-02-14 16:50:25.446] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:50:25.449] [INFO   ] Se establece conexi髇
+[2026-02-14 16:50:25.450] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
-[2026-02-09 17:55:33.611] [INFO   ] Se cierra conexi贸n
-[2026-02-09 17:55:33.625] [INFO   ] Se establece conexi贸n
-[2026-02-09 17:55:33.629] [INFO   ] Datos recibidos:
-GET / HTTP/1.1
-Host: localhost:8000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
-Accept-Encoding: gzip, deflate, br, zstd
-Connection: keep-alive
-Upgrade-Insecure-Requests: 1
-Sec-Fetch-Dest: document
-Sec-Fetch-Mode: navigate
-Sec-Fetch-Site: cross-site
-Sec-Fetch-User: ?1
-Priority: u=0, i
-Pragma: no-cache
-Cache-Control: no-cache
+[2026-02-14 16:50:25.450] [INFO   ] Error 404 Not Found
+[2026-02-14 16:50:25.450] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:54:37.375] [INFO   ] Se establece conexi髇
+[2026-02-14 16:54:37.378] [INFO   ] Datos recibidos:
+GET / HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: none
+Priority: u=0, i
+
 
+[2026-02-14 16:54:37.453] [INFO   ] Se establece conexi髇
+[2026-02-14 16:54:37.453] [INFO   ] Datos recibidos:
+GET /logo-um.jpg HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=5
+
 
-[2026-02-09 17:55:38.634] [INFO   ] Se cierra conexi贸n
-[2026-02-09 17:55:38.640] [INFO   ] Se establece conexi贸n
-[2026-02-09 17:55:38.641] [INFO   ] Datos recibidos:
-GET / HTTP/1.1
-Host: localhost:8000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
-Accept-Encoding: gzip, deflate, br, zstd
-Connection: keep-alive
-Upgrade-Insecure-Requests: 1
-Sec-Fetch-Dest: document
-Sec-Fetch-Mode: navigate
-Sec-Fetch-Site: cross-site
-Sec-Fetch-User: ?1
-Priority: u=0, i
-Pragma: no-cache
-Cache-Control: no-cache
+[2026-02-14 16:54:37.469] [INFO   ] Se establece conexi髇
+[2026-02-14 16:54:37.470] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
+[2026-02-14 16:54:37.471] [INFO   ] Error 404 Not Found
+[2026-02-14 16:54:37.471] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:54:37.480] [INFO   ] Se establece conexi髇
+[2026-02-14 16:54:37.482] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
-[2026-02-09 17:55:43.647] [INFO   ] Se cierra conexi贸n
-[2026-02-09 17:55:43.661] [INFO   ] Se establece conexi贸n
-[2026-02-09 17:55:43.661] [INFO   ] Datos recibidos:
-GET / HTTP/1.1
-Host: localhost:8000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
-Accept-Encoding: gzip, deflate, br, zstd
-Connection: keep-alive
-Upgrade-Insecure-Requests: 1
-Sec-Fetch-Dest: document
-Sec-Fetch-Mode: navigate
-Sec-Fetch-Site: cross-site
-Sec-Fetch-User: ?1
-Priority: u=0, i
-Pragma: no-cache
-Cache-Control: no-cache
+[2026-02-14 16:54:37.485] [INFO   ] Error 404 Not Found
+[2026-02-14 16:54:37.485] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:54:37.492] [INFO   ] Se establece conexi髇
+[2026-02-14 16:54:37.492] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
+[2026-02-14 16:54:37.493] [INFO   ] Error 404 Not Found
+[2026-02-14 16:54:37.493] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:54:37.499] [INFO   ] Se establece conexi髇
+[2026-02-14 16:54:37.500] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
-[2026-02-09 17:55:48.670] [INFO   ] Se cierra conexi贸n
-[2026-02-09 17:55:48.676] [INFO   ] Se establece conexi贸n
-[2026-02-09 17:55:48.677] [INFO   ] Datos recibidos:
-GET / HTTP/1.1
-Host: localhost:8000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
-Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
-Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
-Accept-Encoding: gzip, deflate, br, zstd
-Connection: keep-alive
-Upgrade-Insecure-Requests: 1
-Sec-Fetch-Dest: document
-Sec-Fetch-Mode: navigate
-Sec-Fetch-Site: cross-site
-Sec-Fetch-User: ?1
-Priority: u=0, i
-Pragma: no-cache
-Cache-Control: no-cache
+[2026-02-14 16:54:37.502] [INFO   ] Error 404 Not Found
+[2026-02-14 16:54:37.502] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:54:37.510] [INFO   ] Se establece conexi髇
+[2026-02-14 16:54:37.511] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
+[2026-02-14 16:54:37.513] [INFO   ] Error 404 Not Found
+[2026-02-14 16:54:37.515] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:54:37.521] [INFO   ] Se establece conexi髇
+[2026-02-14 16:54:37.522] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
 
-[2026-02-09 17:55:48.698] [INFO   ] Se establece conexi贸n
-[2026-02-09 17:55:48.699] [INFO   ] No se recibieron datos
-[2026-02-09 17:55:48.699] [INFO   ] Se cierra conexi贸n
+[2026-02-14 16:54:37.523] [INFO   ] Error 404 Not Found
+[2026-02-14 16:54:37.523] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:54:37.529] [INFO   ] Se establece conexi髇
+[2026-02-14 16:54:37.530] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
+
+[2026-02-14 16:54:37.533] [INFO   ] Error 404 Not Found
+[2026-02-14 16:54:37.534] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:54:37.540] [INFO   ] Se establece conexi髇
+[2026-02-14 16:54:37.541] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
+
+[2026-02-14 16:54:37.541] [INFO   ] Error 404 Not Found
+[2026-02-14 16:54:37.543] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:54:37.550] [INFO   ] Se establece conexi髇
+[2026-02-14 16:54:37.552] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
+
+[2026-02-14 16:54:37.552] [INFO   ] Error 404 Not Found
+[2026-02-14 16:54:37.553] [INFO   ] Se cierra conexi髇
+[2026-02-14 16:54:37.558] [INFO   ] Se establece conexi髇
+[2026-02-14 16:54:37.559] [INFO   ] Datos recibidos:
+GET /favicon.ico HTTP/1.1
+Host: 127.0.0.1:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://127.0.0.1:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=6
+
+
+[2026-02-14 16:54:37.559] [INFO   ] Error 404 Not Found
+[2026-02-14 16:54:37.560] [INFO   ] Se cierra conexi髇
