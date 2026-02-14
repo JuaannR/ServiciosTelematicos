@@ -160,12 +160,12 @@ def process_web_request(cs, webroot):
         # Construir respuesta 200 OK
         respuesta = (
             "HTTP/1.1 200 OK\r\n"
-            f"Server: web.nombreorganizacionXXYY.org\r\n"
-            f"Date: {fecha}\r\n"
-            f"Content-Type: {content_type}\r\n"
-            f"Content-Length: {tam}\r\n"
-            f"Connection: keep-alive\r\n"
-            f"Keep-Alive: timeout={TIMEOUT_CONNECTION}\r\n"
+            "Server: web.nombreorganizacionXXYY.org\r\n"
+            "Date: {fecha}\r\n"
+            "Content-Type: {content_type}\r\n"
+            "Content-Length: {tam}\r\n"
+            "Connection: keep-alive\r\n"
+            "Keep-Alive: timeout={TIMEOUT_CONNECTION}\r\n"
             "\r\n"
         )  
         
@@ -265,6 +265,14 @@ def main():
             else: # Proceso padre
                 cerrar_conexion(conn) # Cerrar el socket especifico del hijo y sigo escuchando por socket_server
 
+        '''
+        while True:
+            conn, _ = socket_server.accept()
+            process_web_request(conn, args.webroot)
+            cerrar_conexion(conn)
+            CODIGO DE PRUEBA PARA WINDOS, PORQUE EL FORK PETA :)
+        '''
+        
         """ Funcionalidad a realizar
         * Crea un socket TCP (SOCK_STREAM)
         * Permite reusar la misma dirección previamente vinculada a otro proceso. Debe ir antes de sock.bind
