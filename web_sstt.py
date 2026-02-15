@@ -16,7 +16,7 @@ import logging      # Para imprimir logs
 
 
 BUFSIZE = 8192 # Tamaño máximo del buffer que se puede utilizar
-TIMEOUT_CONNECTION = 5 # Timout para la conexión persistente
+TIMEOUT_CONNECTION = 10+5+3+1+5 # Timout para la conexión persistente
 MAX_ACCESOS = 10
 
 Solicitud_HTTP = r"^(GET|POST) (/[^ ]*) (HTTP)(/)(1\.1)$"
@@ -150,8 +150,9 @@ def process_web_request(cs, webroot):
         tam = os.path.getsize(ruta_completa)
         
         #Obtener extensión
-        ext = ruta_completa.split(".")[-1]
-        content_type = filetypes.get(ext, "application/octet-stream")
+        ext = ruta_completa.split(".")[-1]  #se queda con lo ultimo -> hola.png -> png
+        content_type = filetypes[ext]
+        #content_type = filetypes.get(ext, "application/octet-stream")
         
         # Fecha HTTP correcta
         from email.utils import formatdate
@@ -161,24 +162,32 @@ def process_web_request(cs, webroot):
         respuesta = (
             "HTTP/1.1 200 OK\r\n"
             "Server: web.nombreorganizacionXXYY.org\r\n"
-            "Date: {fecha}\r\n"
-            "Content-Type: {content_type}\r\n"
-            "Content-Length: {tam}\r\n"
+            "Date: {}\r\n"
+            "Content-Type: {}\r\n"
+            "Content-Length: {}\r\n"
             "Connection: keep-alive\r\n"
-            "Keep-Alive: timeout={TIMEOUT_CONNECTION}\r\n"
+            "Keep-Alive: timeout={}\r\n"
             "\r\n"
-        )  
+        ).format(fecha, content_type, tam, TIMEOUT_CONNECTION)
         
         # Enviar cabeceras
         cs.send(respuesta.encode())
 
-        # Enviar fichero en bloques
+        # Enviar fichero en bloques                 
         with open(ruta_completa, "rb") as f:
-            while True:
+            tamano = os.path.getsize(ruta_completa)
+            inicio = 0
+            while tamano > BUFSIZE:
+                f.seek(inicio)
                 bloque = f.read(BUFSIZE)
-                if not bloque:
-                    break
-                cs.send(bloque)   
+                inicio+=BUFSIZE
+                tamano-=BUFSIZE
+                cs.send(bloque)
+            f.seek(inicio)
+            envio = f.read(tamano)
+            cs.send(envio)
+                
+           
         
         
 
