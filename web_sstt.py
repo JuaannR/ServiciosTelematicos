@@ -12,6 +12,7 @@ import time         # Timeout conexión
 import sys          # sys.exit
 import re           # Analizador sintáctico
 import logging      # Para imprimir logs
+from email.utils import formatdate
 
 
 
@@ -74,12 +75,48 @@ def process_cookies(headers,  cs):
     """
     pass
 
+#CONSTANTE GLOBAL PARA INDICAR EL NOMBRE DEL SERVIDOR
+SERVER_NAME = "web.nombreorganizacionXXYY.org"
+
+#Envia una respuesta HTTP de error correctamente formada
+def enviar_error(cs, codigo, mensaje, descripcion):
+    
+    #Cuerpo HTML del error
+    cuerpo = (
+    "<html>\r\n"
+    "<head><title>{} {}</title></head>\r\n"
+    "<body>\r\n"
+    "<h1>{} {}</h1>\r\n"
+    "<p>{}</p>\r\n"
+    "</body>\r\n"
+     "</html>"
+    ).format(codigo, mensaje, codigo, mensaje, descripcion)
+    
+    cuerpo_bytes = cuerpo.encode()
+    content_length = len(cuerpo_bytes)
+    fecha = formatdate(timeval=None, localtime=False, usegmt=True)
+    
+    respuesta = (
+        "HTTP/1.1 {} {}\r\n"
+        "Server: {}\r\n"
+        "Date: {}\r\n"
+        "Content-Type: text/html\r\n"
+        "Content-Length: {}\r\n"
+        "Connection: close\r\n"
+        "\r\n"
+    ).format(codigo, mensaje, SERVER_NAME, fecha, content_length)
+
+    cs.send(respuesta.encode())
+    cs.send(cuerpo_bytes)    
+    
+
 
 def process_web_request(cs, webroot):
 
     # "lista" con el socket que esta escucahndo
     rlist, _, _ = select.select([cs], [], [], TIMEOUT_CONNECTION)
 
+    #Persistencia HTTP
     # mientras el cliente este conectado (no salta el timeout) el servidor procesa peticiones por ese socket
     while len(rlist) == 1:
         logger.info("Se establece conexión")
@@ -99,10 +136,23 @@ def process_web_request(cs, webroot):
         cabezera, _, body = datos.partition("\r\n\r\n")  
         linea_cabezera = cabezera.split("\r\n")
 
+        #Verificar que existe la cabecera host
+        host_presente = any(line.startswith("Host:") for line in linea_cabezera)
+        
+        if not host_presente:
+            logger.info("Error 400 Bad Request - Host requerido")
+            enviar_error(cs, 400, "Bad Request", "Host requerido")
+            break
+            
+ 
+        
+        
+        
         
         #Si no hay línea de solicitud -> Petición mal formada
         if len(linea_cabezera) == 0:
             logger.info("Error 400 Bad Request")
+            enviar_error(cs, 400, "Bad Request", "Peticion mal formada")
             break
         
         #Analizar línea de solicitud
@@ -114,6 +164,7 @@ def process_web_request(cs, webroot):
         #Si no se cumple el patrón -> Petición mal formada
         if not m:
             logger.info("Error 400 Bad Request")
+            enviar_error(cs, 400, "Bad Request", "Peticion mal formada")
             break
         
         #Extraer partes de la linea
@@ -123,14 +174,16 @@ def process_web_request(cs, webroot):
         ralla = m.group(4) #redundante
         version = m.group(5) # 1.1
         
-        # Validar método -> Solo se permite GET
+        # Validar método -> Solo se permite GET #### SE PERMITE POST TAMBIEN
         if metodo != "GET":
             logger.info("Error 405 Method Not Allowed")
+            enviar_error(cs, 405, "Method Not Allowed", "Metodo no permitido")
             break
 
         #Validar versión HTTP -> Solo se permite HTTP/1.1
         if version != "1.1":
             logger.info("Error 505 HTTP Version Not Supported")
+            enviar_error(cs, 505, "HTTP Version Not Supported", "Version HTTP no soportada")
             break
         
         if ruta == "/":
@@ -142,6 +195,7 @@ def process_web_request(cs, webroot):
         # Verficar que el fichero existe
         if not os.path.isfile(ruta_completa):
             logger.info("Error 404 Not Found")
+            enviar_error(cs, 404, "Not Found", "El recurso solicitado no existe")
             break
         
         
@@ -155,7 +209,6 @@ def process_web_request(cs, webroot):
         #content_type = filetypes.get(ext, "application/octet-stream")
         
         # Fecha HTTP correcta
-        from email.utils import formatdate
         fecha = formatdate(timeval=None, localtime=False, usegmt=True)
 
         # Construir respuesta 200 OK
