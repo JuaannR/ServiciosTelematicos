@@ -1,2 +1,86 @@
-[2026-02-21 11:17:55.723] [INFO   ] Enabling server in address 127.0.0.1 and port 8080.
-[2026-02-21 11:17:55.723] [INFO   ] Serving files from ./webroot
+[2026-02-22 20:01:01.737] [INFO   ] Enabling server in address localhost and port 8000.
+[2026-02-22 20:01:01.738] [INFO   ] Serving files from .
+[2026-02-22 20:01:03.513] [INFO   ] Se establece conexión
+[2026-02-22 20:01:03.513] [INFO   ] Datos recibidos:
+GET / HTTP/1.1
+Host: localhost:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: none
+Sec-Fetch-User: ?1
+Priority: u=0, i
+
+
+[2026-02-22 20:01:03.518] [INFO   ] Respuesta enviada: 
+HTTP/1.1 200 OK
+Server: web.nombreorganizacionXXYY.org
+Date: Sun, 22 Feb 2026 19:01:03 GMT
+Content-Type: text/html
+Content-Length: 480
+Connection: keep-alive
+Keep-Alive: timeout=24
+
+
+[2026-02-22 20:01:03.545] [INFO   ] Se establece conexión
+[2026-02-22 20:01:03.545] [INFO   ] Datos recibidos:
+GET /logo-um.jpg HTTP/1.1
+Host: localhost:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: image/avif,image/webp,image/png,image/svg+xml,image/*;q=0.8,*/*;q=0.5
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://localhost:8000/
+Sec-Fetch-Dest: image
+Sec-Fetch-Mode: no-cors
+Sec-Fetch-Site: same-origin
+Priority: u=5
+
+
+[2026-02-22 20:01:03.549] [INFO   ] Respuesta enviada: 
+HTTP/1.1 200 OK
+Server: web.nombreorganizacionXXYY.org
+Date: Sun, 22 Feb 2026 19:01:03 GMT
+Content-Type: image/jpg
+Content-Length: 9558
+Connection: keep-alive
+Keep-Alive: timeout=24
+
+
+[2026-02-22 20:01:04.081] [INFO   ] Se establece conexión
+[2026-02-22 20:01:04.082] [INFO   ] Datos recibidos:
+GET /?email=domingo%40um.es HTTP/1.1
+Host: localhost:8000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:147.0) Gecko/20100101 Firefox/147.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: es-ES,es;q=0.9,en-US;q=0.8,en;q=0.7
+Accept-Encoding: gzip, deflate, br, zstd
+Connection: keep-alive
+Referer: http://localhost:8000/
+Upgrade-Insecure-Requests: 1
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+Priority: u=0, i
+
+
+[2026-02-22 20:01:04.083] [INFO   ] Email valido: domingo@um.es
+[2026-02-22 20:01:04.083] [INFO   ] Respuesta error:
+HTTP/1.1 200 OK
+Server: web.nombreorganizacionXXYY.org
+Date: Sun, 22 Feb 2026 19:01:04 GMT
+Content-Type: text/html
+Content-Length: 780
+Connection: close
+
+
+[2026-02-22 20:01:04.084] [INFO   ] Se establece conexión
+[2026-02-22 20:01:04.085] [INFO   ] No se recibieron datos
+[2026-02-22 20:01:04.085] [INFO   ] Se cierra conexión

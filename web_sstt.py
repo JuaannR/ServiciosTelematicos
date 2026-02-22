@@ -77,21 +77,49 @@ def process_cookies(headers,  cs):
 
 #CONSTANTE GLOBAL PARA INDICAR EL NOMBRE DEL SERVIDOR
 SERVER_NAME = "web.nombreorganizacionXXYY.org"
+EMAILS_VALIDOS = ["domingo@um.es", "juan@um.es"]
 
 #Envia una respuesta HTTP de error correctamente formada
 def enviar_error(cs, codigo, mensaje, descripcion):
     
-    #Cuerpo HTML del error
     cuerpo = (
-    "<html>\r\n"
-    "<head><title>{} {}</title></head>\r\n"
-    "<body>\r\n"
-    "<h1>{} {}</h1>\r\n"
-    "<p>{}</p>\r\n"
-    "</body>\r\n"
-     "</html>"
-    ).format(codigo, mensaje, codigo, mensaje, descripcion)
-    
+    "<!DOCTYPE html>\n"
+    "<html lang=\"es\">\n"
+    "<head>\n"
+    "    <meta charset=\"UTF-8\">\n"
+    "    <title>{} - {}</title>\n"
+    "    <style>\n"
+    "        body {{\n"
+    "            font-family: Arial, sans-serif;\n"
+    "            background-color: #f2f2f2;\n"
+    "            text-align: center;\n"
+    "            padding-top: 80px;\n"
+    "        }}\n"
+    "        h1 {{\n"
+    "            font-size: 48px;\n"
+    "            color: #333;\n"
+    "        }}\n"
+    "        p {{\n"
+    "            font-size: 20px;\n"
+    "            color: #666;\n"
+    "        }}\n"
+    "        a {{\n"
+    "            color: #007BFF;\n"
+    "            text-decoration: none;\n"
+    "        }}\n"
+    "        a:hover {{\n"
+    "            text-decoration: underline;\n"
+    "        }}\n"
+    "    </style>\n"
+    "</head>\n"
+    "<body>\n"
+    "    <h1>{} {}</h1>\n"                   
+    "    <p>{}</p>\n"                        
+    "    <p><a href=\"/\">Volver al inicio</a></p>\n"
+    "</body>\n"
+    "</html>\n"
+    ).format(codigo, descripcion, codigo, mensaje, descripcion)
+    logger.info("Cuerpo error recibido:\n" + cuerpo)
     cuerpo_bytes = cuerpo.encode()
     content_length = len(cuerpo_bytes)
     fecha = formatdate(timeval=None, localtime=False, usegmt=True)
@@ -105,11 +133,105 @@ def enviar_error(cs, codigo, mensaje, descripcion):
         "Connection: close\r\n"
         "\r\n"
     ).format(codigo, mensaje, SERVER_NAME, fecha, content_length)
-
+    logger.info("Respuesta error:\n" + respuesta)
     cs.send(respuesta.encode())
-    cs.send(cuerpo_bytes)    
-    
+    cs.send(cuerpo_bytes)
 
+    """#Cuerpo HTML del error
+    cuerpo = (
+    "<html>\r\n"
+    "<head><title>{} {}</title></head>\r\n"
+    "<body>\r\n"
+    "<h1>{} {}</h1>\r\n"
+    "<p>{}</p>\r\n"
+    "</body>\r\n"
+     "</html>"
+    ).format(codigo, mensaje, codigo, mensaje, descripcion)
+    #logger.info("Cuerpo error recibido:\n" + cuerpo)
+    cuerpo_bytes = cuerpo.encode()
+    content_length = len(cuerpo_bytes)
+    fecha = formatdate(timeval=None, localtime=False, usegmt=True)
+    
+    respuesta = (
+        "HTTP/1.1 {} {}\r\n"
+        "Server: {}\r\n"
+        "Date: {}\r\n"
+        "Content-Type: text/html\r\n"
+        "Content-Length: {}\r\n"
+        "Connection: close\r\n"
+        "\r\n"
+    ).format(codigo, mensaje, SERVER_NAME, fecha, content_length)
+    #logger.info("Respuesta error:\n" + respuesta)
+    cs.send(respuesta.encode())
+    cs.send(cuerpo_bytes)""" 
+    
+def construir_respuesta(codigo_de_estado, nombre_servidor, fecha, content_type, tam, timeout):
+    respuesta = (
+        "HTTP/1.1 {}\r\n"
+        "Server: {}\r\n"
+        "Date: {}\r\n"
+        "Content-Type: {}\r\n"
+        "Content-Length: {}\r\n"
+        "Connection: keep-alive\r\n"
+        "Keep-Alive: timeout={}\r\n"
+        "\r\n"
+    ).format(codigo_de_estado, nombre_servidor, fecha, content_type, tam, TIMEOUT_CONNECTION)
+    return respuesta
+def enviar_html(cs, email):
+    cuerpo = (
+    "<!DOCTYPE html>\n"
+    "<html lang=\"es\">\n"
+    "<head>\n"
+    "    <meta charset=\"UTF-8\">\n"
+    "    <title>Email válido</title>\n"
+    "    <style>\n"
+    "        body {{\n"
+    "            font-family: Arial, sans-serif;\n"
+    "            background-color: #e8ffe8;\n"
+    "            text-align: center;\n"
+    "            padding-top: 80px;\n"
+    "        }}\n"
+    "        h1 {{\n"
+    "            font-size: 42px;\n"
+    "            color: #2e7d32;\n"
+    "        }}\n"
+    "        p {{\n"
+    "            font-size: 22px;\n"
+    "            color: #444;\n"
+    "        }}\n"
+    "        a {{\n"
+    "            color: #0066cc;\n"
+    "            text-decoration: none;\n"
+    "        }}\n"
+    "        a:hover {{\n"
+    "            text-decoration: underline;\n"
+    "        }}\n"
+    "    </style>\n"
+    "</head>\n"
+    "<body>\n"
+    "    <h1>✔ Email válido</h1>\n"
+    "    <p>El email <strong>{}</strong> está autorizado.</p>\n"
+    "    <p><a href=\"/\">Volver al inicio</a></p>\n"
+    "</body>\n"
+    "</html>\n"
+    ).format(email)
+    #logger.info("Cuerpo error recibido:\n" + cuerpo)
+    cuerpo_bytes = cuerpo.encode()
+    content_length = len(cuerpo_bytes)
+    fecha = formatdate(timeval=None, localtime=False, usegmt=True)
+    
+    respuesta = (
+        "HTTP/1.1 {}\r\n"
+        "Server: {}\r\n"
+        "Date: {}\r\n"
+        "Content-Type: text/html\r\n"
+        "Content-Length: {}\r\n"
+        "Connection: close\r\n"
+        "\r\n"
+    ).format("200 OK", SERVER_NAME, fecha, content_length)
+    logger.info("Respuesta error:\n" + respuesta)
+    cs.send(respuesta.encode())
+    cs.send(cuerpo_bytes)
 
 def process_web_request(cs, webroot):
 
@@ -166,6 +288,7 @@ def process_web_request(cs, webroot):
             logger.info("Error 400 Bad Request")
             enviar_error(cs, 400, "Bad Request", "Peticion mal formada")
             break
+        #logger.info("No falla la expresion regular")
         
         #Extraer partes de la linea
         metodo = m.group(1) #GET o POST
@@ -175,7 +298,7 @@ def process_web_request(cs, webroot):
         version = m.group(5) # 1.1
         
         # Validar método -> Solo se permite GET #### SE PERMITE POST TAMBIEN
-        if metodo != "GET":
+        if metodo != "GET" and metodo != "POST":
             logger.info("Error 405 Method Not Allowed")
             enviar_error(cs, 405, "Method Not Allowed", "Metodo no permitido")
             break
@@ -188,60 +311,65 @@ def process_web_request(cs, webroot):
         
         if ruta == "/":
             ruta = "/index.html"
+            # Construir ruta absoluta del fichero
+            ruta_completa = os.path.join(webroot, ruta.lstrip("/"))
+        else :
+            ruta_completa = os.path.join(webroot, ruta.lstrip("/"))
+            email = ruta_completa.split("?")[-1]
+            email = ruta_completa.split("=")[-1]
+            email = email.replace("%40", "@")
             
-        # Construir ruta absoluta del fichero
-        ruta_completa = os.path.join(webroot, ruta.lstrip("/"))
+        
 
         # Verficar que el fichero existe
-        if not os.path.isfile(ruta_completa):
+        """if not os.path.isfile(ruta_completa):
+            logger.info("Error 404 Not Found")
+            enviar_error(cs, 404, "Not Found", "El recurso solicitado no existe")
+            break"""
+        
+        if os.path.isfile(ruta_completa):
+        
+            #Si el fichero existe, enviamos 200 OK
+            tam = os.path.getsize(ruta_completa)
+            
+            #Obtener extensión
+            ext = ruta_completa.split(".")[-1]  #se queda con lo ultimo -> hola.png -> png
+            content_type = filetypes[ext]
+            #content_type = filetypes.get(ext, "application/octet-stream")
+            
+            # Fecha HTTP correcta
+            fecha = formatdate(timeval=None, localtime=False, usegmt=True)
+
+            # Construir respuesta 200 OK
+            respuesta = construir_respuesta("200 OK", SERVER_NAME, fecha, content_type, tam, TIMEOUT_CONNECTION)
+            
+            # Enviar cabeceras
+            cs.send(respuesta.encode())
+            logger.info("Respuesta enviada: \r\n" + respuesta)
+
+            # Enviar fichero en bloques
+            with open(ruta_completa, "rb") as f:
+                tamano = os.path.getsize(ruta_completa)
+                inicio = 0
+                while tamano > BUFSIZE:
+                    #logger.info("Hacesmos")
+                    f.seek(inicio)
+                    bloque = f.read(BUFSIZE)
+                    inicio+=BUFSIZE
+                    tamano-=BUFSIZE
+                    cs.send(bloque)
+                f.seek(inicio)
+                envio = f.read(tamano)
+                cs.send(envio)
+        elif email in EMAILS_VALIDOS:
+            logger.info("Email valido: " + email)
+            enviar_html(cs, email)
+        else:
+            # Verficar que el fichero existe
             logger.info("Error 404 Not Found")
             enviar_error(cs, 404, "Not Found", "El recurso solicitado no existe")
             break
-        
-        
-        
-        #Si el fichero existe, enviamos 200 OK
-        tam = os.path.getsize(ruta_completa)
-        
-        #Obtener extensión
-        ext = ruta_completa.split(".")[-1]  #se queda con lo ultimo -> hola.png -> png
-        content_type = filetypes[ext]
-        #content_type = filetypes.get(ext, "application/octet-stream")
-        
-        # Fecha HTTP correcta
-        fecha = formatdate(timeval=None, localtime=False, usegmt=True)
-
-        # Construir respuesta 200 OK
-        respuesta = (
-            "HTTP/1.1 200 OK\r\n"
-            "Server: web.nombreorganizacionXXYY.org\r\n"
-            "Date: {}\r\n"
-            "Content-Type: {}\r\n"
-            "Content-Length: {}\r\n"
-            "Connection: keep-alive\r\n"
-            "Keep-Alive: timeout={}\r\n"
-            "\r\n"
-        ).format(fecha, content_type, tam, TIMEOUT_CONNECTION)
-        
-        # Enviar cabeceras
-        cs.send(respuesta.encode())
-
-        # Enviar fichero en bloques                 
-        with open(ruta_completa, "rb") as f:
-            tamano = os.path.getsize(ruta_completa)
-            inicio = 0
-            while tamano > BUFSIZE:
-                f.seek(inicio)
-                bloque = f.read(BUFSIZE)
-                inicio+=BUFSIZE
-                tamano-=BUFSIZE
-                cs.send(bloque)
-            f.seek(inicio)
-            envio = f.read(tamano)
-            cs.send(envio)
-                
-           
-        
+            
         
 
         rlist, _, _ = select.select([cs], [], [], TIMEOUT_CONNECTION)
