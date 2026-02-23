@@ -17,8 +17,10 @@ from email.utils import formatdate
 
 
 BUFSIZE = 8192 # Tamaño máximo del buffer que se puede utilizar
-TIMEOUT_CONNECTION = 10+5+3+1+5 # Timout para la conexión persistente
+#TIMEOUT_CONNECTION = 10+5+3+1+5 # Timout para la conexión persistente
+TIMEOUT_CONNECTION = 60
 MAX_ACCESOS = 10
+
 
 Solicitud_HTTP = r"^(GET|POST) (/[^ ]*) (HTTP)(/)(1\.1)$"
 Error = r"Error [0-9]+ ."
@@ -177,6 +179,7 @@ def construir_respuesta(codigo_de_estado, nombre_servidor, fecha, content_type, 
         "\r\n"
     ).format(codigo_de_estado, nombre_servidor, fecha, content_type, tam, TIMEOUT_CONNECTION)
     return respuesta
+
 def enviar_html(cs, email):
     cuerpo = (
     "<!DOCTYPE html>\n"
@@ -266,10 +269,6 @@ def process_web_request(cs, webroot):
             enviar_error(cs, 400, "Bad Request", "Host requerido")
             break
             
- 
-        
-        
-        
         
         #Si no hay línea de solicitud -> Petición mal formada
         if len(linea_cabezera) == 0:
@@ -297,6 +296,9 @@ def process_web_request(cs, webroot):
         ralla = m.group(4) #redundante
         version = m.group(5) # 1.1
         
+        #Separar parámetros de la ruta
+        ruta, _, query_string = ruta.partition("?")
+        
         # Validar método -> Solo se permite GET #### SE PERMITE POST TAMBIEN
         if metodo != "GET" and metodo != "POST":
             logger.info("Error 405 Method Not Allowed")
@@ -311,14 +313,19 @@ def process_web_request(cs, webroot):
         
         if ruta == "/":
             ruta = "/index.html"
-            # Construir ruta absoluta del fichero
-            ruta_completa = os.path.join(webroot, ruta.lstrip("/"))
-        else :
-            ruta_completa = os.path.join(webroot, ruta.lstrip("/"))
-            email = ruta_completa.split("?")[-1]
-            email = ruta_completa.split("=")[-1]
-            email = email.replace("%40", "@")
             
+        # Construir ruta absoluta del fichero
+        ruta_completa = os.path.join(webroot, ruta.lstrip("/"))
+        
+        email = None
+        
+        if metodo == "GET" and query_string:
+            parametros = query_string.split("&")
+            for p in parametros:
+                if p.startswith("email="):
+                    email = p.split("=",1)[1]
+                    # €40 es el @ coodificado
+                    email = email.replace("%40", "@")
         
 
         # Verficar que el fichero existe
@@ -327,49 +334,47 @@ def process_web_request(cs, webroot):
             enviar_error(cs, 404, "Not Found", "El recurso solicitado no existe")
             break"""
         
+        # Procesamos el email si existe
+        if email is not None:
+            if email in EMAILS_VALIDOS:
+                logger.info("Email valido: " + email)
+                enviar_html(cs, email)
+            else:
+                logger.info("Email no autorizado: " + email)
+                enviar_error(cs, 403, "Forbidden", "Email no autorizado")
+            break
+
+        # Después servimos fichero
         if os.path.isfile(ruta_completa):
-        
-            #Si el fichero existe, enviamos 200 OK
+
             tam = os.path.getsize(ruta_completa)
-            
-            #Obtener extensión
-            ext = ruta_completa.split(".")[-1]  #se queda con lo ultimo -> hola.png -> png
-            content_type = filetypes[ext]
-            #content_type = filetypes.get(ext, "application/octet-stream")
-            
-            # Fecha HTTP correcta
+            ext = ruta_completa.split(".")[-1]
+            content_type = filetypes.get(ext, "application/octet-stream")
             fecha = formatdate(timeval=None, localtime=False, usegmt=True)
 
-            # Construir respuesta 200 OK
             respuesta = construir_respuesta("200 OK", SERVER_NAME, fecha, content_type, tam, TIMEOUT_CONNECTION)
-            
-            # Enviar cabeceras
+
             cs.send(respuesta.encode())
             logger.info("Respuesta enviada: \r\n" + respuesta)
 
-            # Enviar fichero en bloques
             with open(ruta_completa, "rb") as f:
                 tamano = os.path.getsize(ruta_completa)
                 inicio = 0
                 while tamano > BUFSIZE:
-                    #logger.info("Hacesmos")
                     f.seek(inicio)
                     bloque = f.read(BUFSIZE)
-                    inicio+=BUFSIZE
-                    tamano-=BUFSIZE
+                    inicio += BUFSIZE
+                    tamano -= BUFSIZE
                     cs.send(bloque)
                 f.seek(inicio)
                 envio = f.read(tamano)
                 cs.send(envio)
-        elif email in EMAILS_VALIDOS:
-            logger.info("Email valido: " + email)
-            enviar_html(cs, email)
+
         else:
-            # Verficar que el fichero existe
             logger.info("Error 404 Not Found")
             enviar_error(cs, 404, "Not Found", "El recurso solicitado no existe")
             break
-            
+                    
         
 
         rlist, _, _ = select.select([cs], [], [], TIMEOUT_CONNECTION)
