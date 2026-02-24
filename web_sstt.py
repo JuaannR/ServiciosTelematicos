@@ -66,8 +66,6 @@ def cerrar_conexion(cs):
     cs.close()
     pass
 
-
-def process_cookies(headers,  cs):
     """ Esta función procesa la cookie cookie_counter
         1. Se analizan las cabeceras en headers para buscar la cabecera Cookie
         2. Una vez encontrada una cabecera Cookie se comprueba si el valor es cookie_counter
@@ -75,6 +73,32 @@ def process_cookies(headers,  cs):
         4. Si se encuentra y tiene el valor MAX_ACCESSOS se devuelve MAX_ACCESOS
         5. Si se encuentra y tiene un valor 1 <= x < MAX_ACCESOS se incrementa en 1 y se devuelve el valor
     """
+def process_cookies(headers):
+    for line in headers:
+        if line.startswith("Cookie:"):
+            cookies = line[len("Cookie:"):].strip()
+            lista_cookies = cookies.split(";")
+            
+            for c in lista_cookies:
+                c = c.strip()
+                
+                if c.startswith("cookie_counter="):
+                    try:
+                        valor = int(c.split("=")[1])
+                    except:
+                        return 1
+
+                    if valor >= MAX_ACCESOS:
+                        return MAX_ACCESOS
+                    if 1 <= valor < MAX_ACCESOS:
+                        return valor + 1
+                    
+    #Si no se encuentra cookie_counter
+    return 1
+    
+    
+    
+    
     pass
 
 #CONSTANTE GLOBAL PARA INDICAR EL NOMBRE DEL SERVIDOR
@@ -167,7 +191,7 @@ def enviar_error(cs, codigo, mensaje, descripcion):
     cs.send(respuesta.encode())
     cs.send(cuerpo_bytes)""" 
     
-def construir_respuesta(codigo_de_estado, nombre_servidor, fecha, content_type, tam, timeout):
+def construir_respuesta(codigo_de_estado, nombre_servidor, fecha, content_type, tam, timeout, contador):
     respuesta = (
         "HTTP/1.1 {}\r\n"
         "Server: {}\r\n"
@@ -176,11 +200,12 @@ def construir_respuesta(codigo_de_estado, nombre_servidor, fecha, content_type, 
         "Content-Length: {}\r\n"
         "Connection: keep-alive\r\n"
         "Keep-Alive: timeout={}\r\n"
+        "Set-Cookie: cookie_counter={}\r\n"
         "\r\n"
-    ).format(codigo_de_estado, nombre_servidor, fecha, content_type, tam, TIMEOUT_CONNECTION)
+    ).format(codigo_de_estado, nombre_servidor, fecha, content_type, tam, timeout, contador)
     return respuesta
 
-def enviar_html(cs, email):
+def enviar_html(cs, email, contador):
     cuerpo = (
     "<!DOCTYPE html>\n"
     "<html lang=\"es\">\n"
@@ -229,10 +254,11 @@ def enviar_html(cs, email):
         "Date: {}\r\n"
         "Content-Type: text/html\r\n"
         "Content-Length: {}\r\n"
+        "Set-Cookie: cookie_counter={}\r\n"
         "Connection: close\r\n"
         "\r\n"
-    ).format("200 OK", SERVER_NAME, fecha, content_length)
-    logger.info("Respuesta error:\n" + respuesta)
+    ).format("200 OK", SERVER_NAME, fecha, content_length, contador)
+    logger.info("Respuesta enviada:\n" + respuesta)
     cs.send(respuesta.encode())
     cs.send(cuerpo_bytes)
 
@@ -260,6 +286,10 @@ def process_web_request(cs, webroot):
         # Separar cabeceras del cuerpo
         cabezera, _, body = datos.partition("\r\n\r\n")  
         linea_cabezera = cabezera.split("\r\n")
+        
+        #Imprimir cabeceras individuales
+        for linea in linea_cabezera[1:]:   # Saltamos la línea de solicitud
+            logger.info("Cabecera recibida: " + linea)
 
         #Verificar que existe la cabecera host
         host_presente = any(line.startswith("Host:") for line in linea_cabezera)
@@ -311,11 +341,33 @@ def process_web_request(cs, webroot):
             enviar_error(cs, 505, "HTTP Version Not Supported", "Version HTTP no soportada")
             break
         
+        
         if ruta == "/":
             ruta = "/index.html"
             
         # Construir ruta absoluta del fichero
         ruta_completa = os.path.join(webroot, ruta.lstrip("/"))
+        
+        
+        # Verficar que el fichero existe
+        if not os.path.isfile(ruta_completa):
+            logger.info("Error 404 Not Found")
+            enviar_error(cs, 404, "Not Found", "El recurso solicitado no existe")
+            break
+        
+        
+        #process_cookies nunca devuelva mas de MAX, se usa ==
+        
+        if ruta == "/index.html":
+            contador = process_cookies(linea_cabezera)
+        else:
+            contador = 0
+        
+        if contador == MAX_ACCESOS:
+            logger.info("Error 403 Forbidden - Max accesos alcanzado")
+            enviar_error(cs, 403, "Forbidden", "Numero maximo de accesos alcanzado")
+            break
+        
         
         email = None
         
@@ -327,18 +379,12 @@ def process_web_request(cs, webroot):
                     # €40 es el @ coodificado
                     email = email.replace("%40", "@")
         
-
-        # Verficar que el fichero existe
-        """if not os.path.isfile(ruta_completa):
-            logger.info("Error 404 Not Found")
-            enviar_error(cs, 404, "Not Found", "El recurso solicitado no existe")
-            break"""
         
         # Procesamos el email si existe
         if email is not None:
             if email in EMAILS_VALIDOS:
                 logger.info("Email valido: " + email)
-                enviar_html(cs, email)
+                enviar_html(cs, email, contador)
             else:
                 logger.info("Email no autorizado: " + email)
                 enviar_error(cs, 403, "Forbidden", "Email no autorizado")
@@ -352,7 +398,7 @@ def process_web_request(cs, webroot):
             content_type = filetypes.get(ext, "application/octet-stream")
             fecha = formatdate(timeval=None, localtime=False, usegmt=True)
 
-            respuesta = construir_respuesta("200 OK", SERVER_NAME, fecha, content_type, tam, TIMEOUT_CONNECTION)
+            respuesta = construir_respuesta("200 OK", SERVER_NAME, fecha, content_type, tam, TIMEOUT_CONNECTION, contador)
 
             cs.send(respuesta.encode())
             logger.info("Respuesta enviada: \r\n" + respuesta)
