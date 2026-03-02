@@ -1,6 +1,7 @@
 # coding=utf-8
 #!/usr/bin/env python3
 
+
 import socket
 import selectors    #https://docs.python.org/3/library/selectors.html
 import select
@@ -17,6 +18,7 @@ from email.utils import formatdate
 
 
 BUFSIZE = 8192 # Tamaño máximo del buffer que se puede utilizar
+# XX=53 / YY=15 en base a los DNI, por tanto 5315
 #TIMEOUT_CONNECTION = 10+5+3+1+5 # Timout para la conexión persistente
 TIMEOUT_CONNECTION = 60
 MAX_ACCESOS = 10
@@ -82,7 +84,7 @@ def process_cookies(headers):
             for c in lista_cookies:
                 c = c.strip()
                 
-                if c.startswith("cookie_counter="):
+                if c.startswith("cookie_counter5315="):
                     try:
                         valor = int(c.split("=")[1])
                     except:
@@ -102,7 +104,7 @@ def process_cookies(headers):
     pass
 
 #CONSTANTE GLOBAL PARA INDICAR EL NOMBRE DEL SERVIDOR
-SERVER_NAME = "web.nombreorganizacionXXYY.org"
+SERVER_NAME = "web.nombreorganizacion5315.org"
 EMAILS_VALIDOS = ["domingo@um.es", "juan@um.es"]
 
 #Envia una respuesta HTTP de error correctamente formada
@@ -200,9 +202,13 @@ def construir_respuesta(codigo_de_estado, nombre_servidor, fecha, content_type, 
         "Content-Length: {}\r\n"
         "Connection: keep-alive\r\n"
         "Keep-Alive: timeout={}\r\n"
-        "Set-Cookie: cookie_counter={}\r\n"
-        "\r\n"
-    ).format(codigo_de_estado, nombre_servidor, fecha, content_type, tam, timeout, contador)
+    ).format(codigo_de_estado, nombre_servidor, fecha, content_type, tam, timeout)
+
+    # Solo añadimos cookie si contador no es None (solo si pedimos index.html)
+    if contador is not None:
+        respuesta += "Set-Cookie: cookie_counter5315={}; Max-Age=30\r\n".format(contador)
+    respuesta += "\r\n"
+
     return respuesta
 
 def enviar_html(cs, email, contador):
@@ -254,10 +260,11 @@ def enviar_html(cs, email, contador):
         "Date: {}\r\n"
         "Content-Type: text/html\r\n"
         "Content-Length: {}\r\n"
-        "Set-Cookie: cookie_counter={}\r\n"
-        "Connection: close\r\n"
+        "Set-Cookie: cookie_counter5315={}; Max-Age=30\r\n"
+        "Connection: keep-alive\r\n"
+        "Keep-Alive: timeout={}\r\n"
         "\r\n"
-    ).format("200 OK", SERVER_NAME, fecha, content_length, contador)
+    ).format("200 OK", SERVER_NAME, fecha, content_length, contador, TIMEOUT_CONNECTION)
     logger.info("Respuesta enviada:\n" + respuesta)
     cs.send(respuesta.encode())
     cs.send(cuerpo_bytes)
@@ -356,13 +363,15 @@ def process_web_request(cs, webroot):
             break
         
         
-        #process_cookies nunca devuelva mas de MAX, se usa ==
         
+        # *** El valor de la cookie variará solo para cada petición del usuario
+        # al recurso index.html del servidor, no para cada recurso ***
         if ruta == "/index.html":
             contador = process_cookies(linea_cabezera)
         else:
             contador = 0
         
+        #process_cookies nunca devuelva mas de MAX, se usa ==
         if contador == MAX_ACCESOS:
             logger.info("Error 403 Forbidden - Max accesos alcanzado")
             enviar_error(cs, 403, "Forbidden", "Numero maximo de accesos alcanzado")
@@ -398,8 +407,12 @@ def process_web_request(cs, webroot):
             content_type = filetypes.get(ext, "application/octet-stream")
             fecha = formatdate(timeval=None, localtime=False, usegmt=True)
 
-            respuesta = construir_respuesta("200 OK", SERVER_NAME, fecha, content_type, tam, TIMEOUT_CONNECTION, contador)
-
+            #al hacer el get de la foto no hacemos set-cookie, así no la sobreescribimos
+            if ruta == "/index.html":
+                respuesta = construir_respuesta("200 OK", SERVER_NAME, fecha, content_type, tam, TIMEOUT_CONNECTION, contador)
+            else:
+                respuesta = construir_respuesta("200 OK", SERVER_NAME, fecha, content_type, tam, TIMEOUT_CONNECTION, None)
+                        
             cs.send(respuesta.encode())
             logger.info("Respuesta enviada: \r\n" + respuesta)
 
