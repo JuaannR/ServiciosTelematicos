@@ -53,7 +53,6 @@ logger.addHandler(file_handler)
 #Retorna el número de bytes enviados
 def enviar_mensaje(cs, data):
     return cs.send(data)
-    pass
 
 #Recibe datos a través del socket cliente (cs)
 # Se leen los datos y se convierten a string
@@ -61,12 +60,10 @@ def enviar_mensaje(cs, data):
 def recibir_mensaje(cs):
     data = cs.recv(BUFSIZE)
     return data.decode()
-    pass
 
 # Cerrar conexión activa
 def cerrar_conexion(cs):
     cs.close()
-    pass
 
     """ Esta función procesa la cookie cookie_counter
         1. Se analizan las cabeceras en headers para buscar la cabecera Cookie
@@ -97,11 +94,6 @@ def process_cookies(headers):
                     
     #Si no se encuentra cookie_counter
     return 1
-    
-    
-    
-    
-    pass
 
 #CONSTANTE GLOBAL PARA INDICAR EL NOMBRE DEL SERVIDOR
 SERVER_NAME = "web.nombreorganizacion5315.org"
@@ -286,9 +278,6 @@ def process_web_request(cs, webroot):
             logger.info("No se recibieron datos")
             break
         logger.info("Datos recibidos:\n" + datos)
-        # Aquí iría el procesamiento de HTTP
-        
-        
         
         # Separar cabeceras del cuerpo
         cabezera, _, body = datos.partition("\r\n\r\n")  
