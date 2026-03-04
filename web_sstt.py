@@ -1,7 +1,6 @@
 # coding=utf-8
 #!/usr/bin/env python3
 
-
 import socket
 import selectors    #https://docs.python.org/3/library/selectors.html
 import select
@@ -14,8 +13,6 @@ import sys          # sys.exit
 import re           # Analizador sintáctico
 import logging      # Para imprimir logs
 from email.utils import formatdate
-
-
 
 BUFSIZE = 8192 # Tamaño máximo del buffer que se puede utilizar
 # XX=53 / YY=15 en base a los DNI, por tanto 5315
@@ -65,13 +62,6 @@ def recibir_mensaje(cs):
 def cerrar_conexion(cs):
     cs.close()
 
-    """ Esta función procesa la cookie cookie_counter
-        1. Se analizan las cabeceras en headers para buscar la cabecera Cookie
-        2. Una vez encontrada una cabecera Cookie se comprueba si el valor es cookie_counter
-        3. Si no se encuentra cookie_counter , se devuelve 1
-        4. Si se encuentra y tiene el valor MAX_ACCESSOS se devuelve MAX_ACCESOS
-        5. Si se encuentra y tiene un valor 1 <= x < MAX_ACCESOS se incrementa en 1 y se devuelve el valor
-    """
 def process_cookies(headers):
     for line in headers:
         if line.startswith("Cookie:"):
@@ -90,8 +80,7 @@ def process_cookies(headers):
                     if valor >= MAX_ACCESOS:
                         return MAX_ACCESOS
                     if 1 <= valor < MAX_ACCESOS:
-                        return valor + 1
-                    
+                        return valor + 1        
     #Si no se encuentra cookie_counter
     return 1
 
@@ -157,7 +146,7 @@ def enviar_error(cs, codigo, mensaje, descripcion):
     cs.send(respuesta.encode())
     cs.send(cuerpo_bytes)
     
-def construir_respuesta(codigo_de_estado, nombre_servidor, fecha, content_type, tam, timeout, contador):
+def construir_respuesta_cookies(codigo_de_estado, nombre_servidor, fecha, content_type, tam, timeout, contador):
     respuesta = (
         "HTTP/1.1 {}\r\n"
         "Server: {}\r\n"
@@ -172,10 +161,9 @@ def construir_respuesta(codigo_de_estado, nombre_servidor, fecha, content_type, 
     if contador is not None:
         respuesta += "Set-Cookie: cookie_counter5315={}; Max-Age=30\r\n".format(contador)
     respuesta += "\r\n"
-
     return respuesta
 
-def enviar_html(cs, email, contador):
+def enviar_html_email_valido(cs, email, contador):
     cuerpo = (
     "<!DOCTYPE html>\n"
     "<html lang=\"es\">\n"
@@ -266,8 +254,7 @@ def process_web_request(cs, webroot):
             logger.info("Error 400 Bad Request - Host requerido")
             enviar_error(cs, 400, "Bad Request", "Host requerido")
             break
-            
-        
+    
         #Si no hay línea de solicitud -> Petición mal formada
         if len(linea_cabezera) == 0:
             logger.info("Error 400 Bad Request")
@@ -309,21 +296,17 @@ def process_web_request(cs, webroot):
             enviar_error(cs, 505, "HTTP Version Not Supported", "Version HTTP no soportada")
             break
         
-        
         if ruta == "/":
             ruta = "/index.html"
             
         # Construir ruta absoluta del fichero
         ruta_completa = os.path.join(webroot, ruta.lstrip("/"))
-        
-        
+              
         # Verficar que el fichero existe
         if not os.path.isfile(ruta_completa):
             logger.info("Error 404 Not Found")
             enviar_error(cs, 404, "Not Found", "El recurso solicitado no existe")
             break
-        
-        
         
         # *** El valor de la cookie variará solo para cada petición del usuario
         # al recurso index.html del servidor, no para cada recurso ***
@@ -337,8 +320,7 @@ def process_web_request(cs, webroot):
             logger.info("Error 403 Forbidden - Max accesos alcanzado")
             enviar_error(cs, 403, "Forbidden", "Numero maximo de accesos alcanzado")
             break
-        
-        
+         
         email = None
         
         if metodo == "GET" and query_string:
@@ -348,13 +330,12 @@ def process_web_request(cs, webroot):
                     email = p.split("=",1)[1]
                     # €40 es el @ coodificado
                     email = email.replace("%40", "@")
-        
-        
+           
         # Procesamos el email si existe
         if email is not None:
             if email in EMAILS_VALIDOS:
                 logger.info("Email valido: " + email)
-                enviar_html(cs, email, contador)
+                enviar_html_email_valido(cs, email, contador)
             else:
                 logger.info("Email no autorizado: " + email)
                 enviar_error(cs, 403, "Forbidden", "Email no autorizado")
@@ -370,9 +351,9 @@ def process_web_request(cs, webroot):
 
             #al hacer el get de la foto no hacemos set-cookie, así no la sobreescribimos
             if ruta == "/index.html":
-                respuesta = construir_respuesta("200 OK", SERVER_NAME, fecha, content_type, tam, TIMEOUT_CONNECTION, contador)
+                respuesta = construir_respuesta_cookies("200 OK", SERVER_NAME, fecha, content_type, tam, TIMEOUT_CONNECTION, contador)
             else:
-                respuesta = construir_respuesta("200 OK", SERVER_NAME, fecha, content_type, tam, TIMEOUT_CONNECTION, None)
+                respuesta = construir_respuesta_cookies("200 OK", SERVER_NAME, fecha, content_type, tam, TIMEOUT_CONNECTION, None)
                         
             cs.send(respuesta.encode())
             logger.info("Respuesta enviada: \r\n" + respuesta)
@@ -395,59 +376,16 @@ def process_web_request(cs, webroot):
             enviar_error(cs, 404, "Not Found", "El recurso solicitado no existe")
             break
                     
-        
-
         rlist, _, _ = select.select([cs], [], [], TIMEOUT_CONNECTION)
-    
      
     if not rlist:
         logger.info("Se alcanzó el TIMEOUT sin respuestas")
             
     logger.info("Se cierra conexión")
 
-    
-    """ Procesamiento principal de los mensajes recibidos.
-        Típicamente se seguirá un procedimiento similar al siguiente (aunque el alumno puede modificarlo si lo desea)
-
-        * Bucle para esperar hasta que lleguen datos en la red a través del socket cs con select()
-
-            * Se comprueba si hay que cerrar la conexión por exceder TIMEOUT_CONNECTION segundos
-              sin recibir ningún mensaje o hay datos. Se utiliza select.select
-
-            * Si no es por timeout y hay datos en el socket cs.
-                * Leer los datos con recv.
-                * Analizar que la línea de solicitud y comprobar está bien formateada según HTTP 1.1
-                    * Devuelve una lista con los atributos de las cabeceras.
-                    * Comprobar si la versión de HTTP es 1.1
-                    * Comprobar si es un método GET o POST. Si no devolver un error Error 405 "Method Not Allowed".
-                    * Leer URL y eliminar parámetros si los hubiera
-                    * Comprobar si el recurso solicitado es /, En ese caso el recurso es index.html
-                    * Construir la ruta absoluta del recurso (webroot + recurso solicitado)
-                    * Comprobar que el recurso (fichero) existe, si no devolver Error 404 "Not found"
-                    * Analizar las cabeceras. Imprimir cada cabecera y su valor. Si la cabecera es Cookie comprobar
-                      el valor de cookie_counter para ver si ha llegado a MAX_ACCESOS.
-                      Si se ha llegado a MAX_ACCESOS devolver un Error "403 Forbidden"
-                    * Obtener el tamaño del recurso en bytes.
-                    * Extraer extensión para obtener el tipo de archivo. Necesario para la cabecera Content-Type
-                    * Preparar respuesta con código 200. Construir una respuesta que incluya: la línea de respuesta y
-                      las cabeceras Date, Server, Connection, Set-Cookie (para la cookie cookie_counter),
-                      Content-Length y Content-Type.
-                    * Leer y enviar el contenido del fichero a retornar en el cuerpo de la respuesta.
-                    * Se abre el fichero en modo lectura y modo binario
-                        * Se lee el fichero en bloques de BUFSIZE bytes (8KB)
-                        * Cuando ya no hay más información para leer, se corta el bucle
-
-            * Si es por timeout, se cierra el socket tras el período de persistencia.
-                * NOTA: Si hay algún error, enviar una respuesta de error con una pequeña página HTML que informe del error.
-    """
-
-
 def main():
-    """ Función principal del servidor
-    """
 
     try:
-
         # Argument parser para obtener la ip y puerto de los parámetros de ejecución del programa. IP por defecto 0.0.0.0
         parser = argparse.ArgumentParser()
         parser.add_argument("-p", "--port", help="Puerto del servidor", type=int, required=True)
@@ -455,7 +393,6 @@ def main():
         parser.add_argument("-wb", "--webroot", help="Directorio base desde donde se sirven los ficheros (p.ej. /home/user/mi_web)")
         parser.add_argument('--verbose', '-v', action='store_true', help='Incluir mensajes de depuración en la salida')
         args = parser.parse_args()
-
 
         if args.verbose:
             logger.setLevel(logging.DEBUG)
@@ -480,30 +417,6 @@ def main():
             else: # Proceso padre
                 cerrar_conexion(conn) # Cerrar el socket especifico del hijo y sigo escuchando por socket_server
 
-        '''
-        while True:
-            conn, _ = socket_server.accept()
-            process_web_request(conn, args.webroot)
-            cerrar_conexion(conn)
-            CODIGO DE PRUEBA PARA WINDOS, PORQUE EL FORK PETA :)
-        '''
-        
-        """ Funcionalidad a realizar
-        * Crea un socket TCP (SOCK_STREAM)
-        * Permite reusar la misma dirección previamente vinculada a otro proceso. Debe ir antes de sock.bind
-        * Vinculamos el socket a una IP y puerto elegidos
-
-        * Escucha conexiones entrantes
-
-        * Bucle infinito para mantener el servidor activo indefinidamente
-            - Aceptamos la conexión
-
-            - Creamos un proceso hijo
-
-            - Si es el proceso hijo se cierra el socket del padre y procesar la petición con process_web_request()
-
-            - Si es el proceso padre cerrar el socket que gestiona el hijo.
-        """
     except KeyboardInterrupt:
         cerrar_conexion(socket_server)
         sys.exit(0)
