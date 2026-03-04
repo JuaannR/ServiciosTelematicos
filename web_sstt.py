@@ -156,34 +156,6 @@ def enviar_error(cs, codigo, mensaje, descripcion):
     logger.info("Respuesta error:\n" + respuesta)
     cs.send(respuesta.encode())
     cs.send(cuerpo_bytes)
-
-    """#Cuerpo HTML del error
-    cuerpo = (
-    "<html>\r\n"
-    "<head><title>{} {}</title></head>\r\n"
-    "<body>\r\n"
-    "<h1>{} {}</h1>\r\n"
-    "<p>{}</p>\r\n"
-    "</body>\r\n"
-     "</html>"
-    ).format(codigo, mensaje, codigo, mensaje, descripcion)
-    #logger.info("Cuerpo error recibido:\n" + cuerpo)
-    cuerpo_bytes = cuerpo.encode()
-    content_length = len(cuerpo_bytes)
-    fecha = formatdate(timeval=None, localtime=False, usegmt=True)
-    
-    respuesta = (
-        "HTTP/1.1 {} {}\r\n"
-        "Server: {}\r\n"
-        "Date: {}\r\n"
-        "Content-Type: text/html\r\n"
-        "Content-Length: {}\r\n"
-        "Connection: close\r\n"
-        "\r\n"
-    ).format(codigo, mensaje, SERVER_NAME, fecha, content_length)
-    #logger.info("Respuesta error:\n" + respuesta)
-    cs.send(respuesta.encode())
-    cs.send(cuerpo_bytes)""" 
     
 def construir_respuesta(codigo_de_estado, nombre_servidor, fecha, content_type, tam, timeout, contador):
     respuesta = (
