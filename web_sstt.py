@@ -21,7 +21,11 @@ TIMEOUT_CONNECTION = 60
 MAX_ACCESOS = 10
 
 
-Solicitud_HTTP = r"^(GET|POST) (/[^ ]*) (HTTP)(/)(1\.1)$"
+METODO_HTTP = r"^(GET|POST)"
+RUTA_HTTP = r"(\/[^ ]*)"
+VERSION_HTTP = r"HTTP\/1\.1$"
+
+
 Error = r"Error [0-9]+ ."
 
 # Extensiones admitidas (extension, name in HTTP)
@@ -265,36 +269,43 @@ def process_web_request(cs, webroot):
         #Se espera GET /ruta HTTP/1.1
         linea_solicitad = linea_cabezera[0]
         
-        m = re.match(Solicitud_HTTP, linea_solicitad)
+        #linea_solicitud = GET /ruta HTTP/1.1
         
-        #Si no se cumple el patrón -> Petición mal formada
-        if not m:
+        partes = linea_solicitad.strip().split()
+        
+        if len(partes) != 3:
             logger.info("Error 400 Bad Request")
-            enviar_error(cs, 400, "Bad Request", "Peticion mal formada")
+            enviar_error(cs, 400, "Bad Request", "Linea de solicitud inválida")
             break
-        #logger.info("No falla la expresion regular")
         
-        #Extraer partes de la linea
-        metodo = m.group(1) #GET o POST
-        ruta = m.group(2) # /index.html
-        formato = m.group(3) #redundante
-        ralla = m.group(4) #redundante
-        version = m.group(5) # 1.1
         
-        #Separar parámetros de la ruta
-        ruta, _, query_string = ruta.partition("?")
+        #se espera: metodo = GET, ruta = /loquesea, version = HTTP/1.1
+        metodo, ruta, version = partes
         
-        # Validar método -> Solo se permite GET #### SE PERMITE POST TAMBIEN
-        if metodo != "GET" and metodo != "POST":
+        m1 = re.match(METODO_HTTP, metodo)
+        # metodo es diferente de GET o POST
+        if not m1:
             logger.info("Error 405 Method Not Allowed")
             enviar_error(cs, 405, "Method Not Allowed", "Metodo no permitido")
             break
-
-        #Validar versión HTTP -> Solo se permite HTTP/1.1
-        if version != "1.1":
+        
+        m2 = re.match(RUTA_HTTP, ruta)
+        
+        if not m2:
+            logger.info("Error 400 Bad Request")
+            enviar_error(cs, 400, "Bad Request", "Ruta inválida")
+            break
+        
+        m3 = re.match(VERSION_HTTP, version)
+        
+        if not m3:    
             logger.info("Error 505 HTTP Version Not Supported")
             enviar_error(cs, 505, "HTTP Version Not Supported", "Version HTTP no soportada")
             break
+            
+        
+        #Separar parámetros de la ruta
+        ruta, _, correo_coodificado = ruta.partition("?")
         
         if ruta == "/":
             ruta = "/index.html"
@@ -323,12 +334,12 @@ def process_web_request(cs, webroot):
          
         email = None
         
-        if metodo == "GET" and query_string:
-            parametros = query_string.split("&")
+        if metodo == "GET" and correo_coodificado:
+            parametros = correo_coodificado.split("&")
             for p in parametros:
                 if p.startswith("email="):
                     email = p.split("=",1)[1]
-                    # €40 es el @ coodificado
+                    # %40 es el @ coodificado
                     email = email.replace("%40", "@")
            
         # Procesamos el email si existe
