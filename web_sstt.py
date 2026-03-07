@@ -290,20 +290,22 @@ def process_web_request(cs, webroot):
             enviar_error(cs, 505, "HTTP Version Not Supported", "Version HTTP no soportada")
             break
         
-        #Verificar que existe la cabecera host
-        host_presente = any(line.startswith("Host:") for line in linea_cabezera)
-        
 
-        if not host_presente:
-            logger.info("Error 400 Bad Request - Host requerido")
-            enviar_error(cs, 400, "Bad Request", "Host requerido")
-            break
-    
         #Si no hay línea de solicitud -> Petición mal formada
         if len(linea_cabezera) == 0:
             logger.info("Error 400 Bad Request")
             enviar_error(cs, 400, "Bad Request", "Peticion mal formada")
             break
+
+        #Verificar que existe la cabecera host
+        host_presente = any(line.startswith("Host:") for line in linea_cabezera)
+        
+        if not host_presente:
+            logger.info("Error 400 Bad Request - Host requerido")
+            enviar_error(cs, 400, "Bad Request", "Host requerido")
+            break
+    
+        
         
         #Separar parámetros de la ruta
         ruta, _, correo_coodificado = ruta.partition("?")
