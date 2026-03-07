@@ -16,14 +16,14 @@ from email.utils import formatdate
 
 BUFSIZE = 8192 # Tamaño máximo del buffer que se puede utilizar
 # XX=53 / YY=15 en base a los DNI, por tanto 5315
-#TIMEOUT_CONNECTION = 10+5+3+1+5 # Timout para la conexión persistente
-TIMEOUT_CONNECTION = 60
+TIMEOUT_CONNECTION = 10+5+3+1+5 # Timout para la conexión persistente
+#TIMEOUT_CONNECTION = 60
 MAX_ACCESOS = 10
 
 
-METODO_HTTP = r"^(GET|POST)"
+METODO_HTTP = r"(GET|POST)"
 RUTA_HTTP = r"(\/[^ ]*)"
-VERSION_HTTP = r"HTTP\/1\.1$"
+VERSION_HTTP = r"HTTP\/1\.1"
 
 
 Error = r"Error [0-9]+ ."
@@ -250,20 +250,7 @@ def process_web_request(cs, webroot):
         #Imprimir cabeceras individuales
         for linea in linea_cabezera[1:]:   # Saltamos la línea de solicitud
             logger.info("Cabecera recibida: " + linea)
-
-        #Verificar que existe la cabecera host
-        host_presente = any(line.startswith("Host:") for line in linea_cabezera)
         
-        if not host_presente:
-            logger.info("Error 400 Bad Request - Host requerido")
-            enviar_error(cs, 400, "Bad Request", "Host requerido")
-            break
-    
-        #Si no hay línea de solicitud -> Petición mal formada
-        if len(linea_cabezera) == 0:
-            logger.info("Error 400 Bad Request")
-            enviar_error(cs, 400, "Bad Request", "Peticion mal formada")
-            break
         
         #Analizar línea de solicitud
         #Se espera GET /ruta HTTP/1.1
@@ -302,7 +289,21 @@ def process_web_request(cs, webroot):
             logger.info("Error 505 HTTP Version Not Supported")
             enviar_error(cs, 505, "HTTP Version Not Supported", "Version HTTP no soportada")
             break
-            
+        
+        #Verificar que existe la cabecera host
+        host_presente = any(line.startswith("Host:") for line in linea_cabezera)
+        
+
+        if not host_presente:
+            logger.info("Error 400 Bad Request - Host requerido")
+            enviar_error(cs, 400, "Bad Request", "Host requerido")
+            break
+    
+        #Si no hay línea de solicitud -> Petición mal formada
+        if len(linea_cabezera) == 0:
+            logger.info("Error 400 Bad Request")
+            enviar_error(cs, 400, "Bad Request", "Peticion mal formada")
+            break
         
         #Separar parámetros de la ruta
         ruta, _, correo_coodificado = ruta.partition("?")
