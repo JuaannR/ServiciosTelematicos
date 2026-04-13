@@ -90,7 +90,7 @@ def process_cookies(headers):
 
 #CONSTANTE GLOBAL PARA INDICAR EL NOMBRE DEL SERVIDOR
 SERVER_NAME = "web.nombreorganizacion5315.org"
-EMAILS_VALIDOS = ["domingo@um.es", "juan@um.es"]
+EMAILS_VALIDOS = ["domingo@nombreorganizacion5315.org", "juan@nombreorganizacion5315.org"]
 
 #Envia una respuesta HTTP de error correctamente formada
 def enviar_error(cs, codigo, mensaje, descripcion):
